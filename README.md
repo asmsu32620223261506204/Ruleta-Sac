@@ -132,4 +132,3 @@ python main.py
 ## ⚖️ License
 
 [MIT](LICENSE) — free use with attribution.
-
