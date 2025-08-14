@@ -1,0 +1,16 @@
+# entornos/artefactos
+.venv/
+__pycache__/
+*.pyc
+models/
+wandb/
+logs/
+
+# datos/resultados grandes
+*.csv
+*.parquet
+*.pt
+*.zip
+
+# imágenes y plots (si quieres mantener solo el final, comenta esta línea)
+*.png
