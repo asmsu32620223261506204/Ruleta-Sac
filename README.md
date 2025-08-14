@@ -1,29 +1,27 @@
-# Ruleta SAC — ¿Puede la IA "ganar" la ruleta?
+# Roulette SAC — Can AI Beat the House?
 
-Entrené un agente de **Reinforcement Learning (SAC)** para jugar a la **ruleta europea**.
-Spoiler: confirmó lo que dicen las matemáticas — en un juego con esperanza negativa
-(~**−2.7%**) **no hay** estrategia ganadora sostenida.
+I trained a **Soft Actor-Critic (SAC)** agent to play **European roulette**.
+Spoiler: mathematics wins — in a game with a negative expectation (~**−2.7%**) there is **no** sustainable winning strategy.
 
-> Este repo incluye: simulación Gymnasium de ruleta, entrenamiento con Stable-Baselines3,
-> evaluación con bancas pequeñas/grandes y una demo visual en pygame.
+> This repo provides a Gymnasium roulette environment, SAC training with Stable-Baselines3, evaluation scripts for small/large bankrolls and a simple pygame demo.
 
 ---
 
-## 🧠 Idea en 30 segundos
+## 🧠 Idea in 30 Seconds
 
-- **Entorno:** ruleta europea (un cero), acciones continuas → softmax a distribución de apuestas.
-- **Apuestas disponibles (10):** `RED, BLACK, EVEN, ODD, LOW (1–18), HIGH (19–36), N7, N17, N23, N32`.
-- **Recompensa por paso:** `ganancia - stake` (stake = 10% de la banca por defecto).
-- **Objetivo del RL:** aprender a distribuir las apuestas para "hacer crecer" la banca dentro del episodio.
+- **Environment:** European roulette (single zero), continuous action → softmax over bet distribution.
+- **Available bets (10):** `RED, BLACK, EVEN, ODD, LOW (1–18), HIGH (19–36), N7, N17, N23, N32`.
+- **Reward per step:** `win - stake` (stake = 10% of bankroll by default).
+- **Goal of RL:** learn how to distribute bets to "grow" the bankroll within each episode.
 
-> ⚠️ La ruleta tiene **edge** del casino \(-1/37 ≈ -2.70\%\).
-> Todas las apuestas (y combinaciones) comparten esa esperanza negativa.
+> ⚠️ Roulette has a **house edge** of \(-1/37 ≈ -2.70\%\).
+> Every bet (and combination of bets) shares that negative expectation.
 
 ---
 
-## 🛠️ Instalación
+## 🛠️ Installation
 
-Con **conda**:
+Using **conda**:
 
 ```bash
 conda create -n pygame python=3.11 -c conda-forge -y
@@ -31,33 +29,33 @@ conda activate pygame
 pip install -r requirements.txt
 ```
 
-En VS Code selecciona el intérprete del entorno (Python: Select Interpreter).
+In VS Code pick the interpreter from this environment (Python: Select Interpreter).
 
 ---
 
-## 🚀 Entrenamiento (bankroll = $100)
+## 🚀 Training (bankroll = $100)
 
 ```bash
 python train_sac.py --timesteps 500000 --eval_episodes 50
 ```
 
-- Modelo guardado: `models/sac_roulette.zip`
-- Métricas de evaluación corta: `models/training_episodes.csv`
-  - columnas: episodio, retorno, pasos, banca final
+- Model saved at `models/sac_roulette.zip`
+- Short evaluation metrics: `models/training_episodes.csv`
+  - columns: episode, return, steps, final_bankroll
 
-Parámetros útiles:
+Useful parameters:
 
-| parámetro        | descripción                                 | por defecto |
-|------------------|---------------------------------------------|-------------|
-| `--bet_fraction` | fracción de la banca apostada por paso      | 0.10        |
-| `--max_steps`    | pasos máximos por episodio                  | 2000        |
-| `--target_bankroll` | meta para terminar antes                  | 200.0       |
+| parameter          | description                                   | default |
+|--------------------|-----------------------------------------------|---------|
+| `--bet_fraction`   | fraction of bankroll wagered each step        | 0.10    |
+| `--max_steps`      | maximum steps per episode                     | 2000    |
+| `--target_bankroll`| goal to finish early                          | 200.0   |
 
 ---
 
-## 🧪 Evaluación (bankroll grande)
+## 🧪 Evaluation (large bankroll)
 
-Ejemplo con $1.000.000:
+Example with $1,000,000:
 
 ```bash
 python evaluate_policy.py \
@@ -67,19 +65,19 @@ python evaluate_policy.py \
   --out_csv eval_large_bankroll.csv
 ```
 
-Salida (`CSV`): `episode, initial_bankroll, final_bankroll, profit, steps`
+Output (`CSV`): `episode, initial_bankroll, final_bankroll, profit, steps`
 
-Observaciones típicas:
+Typical observations:
 
-- Pocos episodios duplican la banca (rachas favorables).
-- La mayoría termina en quiebra o casi 0 antes de `max_steps`.
-- Promedio final negativo, coherente con el edge del juego.
+- A few episodes double the bankroll thanks to lucky streaks.
+- Most episodes go broke or near zero before `max_steps`.
+- Average final capital is negative, consistent with the game's edge.
 
 ---
 
-## 📈 Visualización rápida
+## 📈 Quick Visualization
 
-Con el CSV de evaluación:
+With the evaluation CSV:
 
 ```python
 import pandas as pd
@@ -88,23 +86,22 @@ import matplotlib.pyplot as plt
 df = pd.read_csv("eval_large_bankroll.csv")
 plt.figure(figsize=(10,5))
 plt.plot(df["episode"], df["final_bankroll"], marker="o", alpha=0.7)
-plt.axhline(y=df["initial_bankroll"][0], linestyle="--", label="Banca inicial")
-plt.xlabel("Episodio")
-plt.ylabel("Capital final ($)")
-plt.title("Capital final por episodio — Evaluación SAC en Ruleta")
+plt.axhline(y=df["initial_bankroll"][0], linestyle="--", label="Initial bankroll")
+plt.xlabel("Episode")
+plt.ylabel("Final capital ($)")
+plt.title("Final capital per episode — SAC Roulette Evaluation")
 plt.legend()
 plt.grid(True, alpha=0.3)
-plt.savefig("capital_vs_episodios.png", dpi=300, bbox_inches="tight")
+plt.savefig("capital_vs_episodes.png", dpi=300, bbox_inches="tight")
 ```
 
-Coloca la imagen generada en `result_examples/`.
+Place the generated image in `result_examples/`.
 
 ---
 
-## 🎲 Demo visual (opcional)
+## 🎲 Visual Demo (optional)
 
-`main.py` implementa la ruleta en **pygame** con rueda y bola animadas.  Útil para
-presentaciones o probar manualmente.
+`main.py` implements the roulette wheel in **pygame** with animated wheel and ball. Handy for presentations or manual play.
 
 ```bash
 python main.py
@@ -112,27 +109,26 @@ python main.py
 
 ---
 
-## 📂 Archivos principales
+## 📂 Key Files
 
-| archivo               | descripción                                        |
-|-----------------------|----------------------------------------------------|
-| `roulette_env_sb3.py` | Entorno Gymnasium de ruleta europea                |
-| `train_sac.py`        | Entrena SAC con banca inicial $100                 |
-| `evaluate_policy.py`  | Evalúa el modelo con bancas grandes y exporta CSV  |
-| `main.py`             | Juego visual en pygame (demo)                      |
-| `requirements.txt`    | Dependencias                                      |
-
----
-
-## 🧰 Solución de problemas
-
-- **Pylance "import no resuelto"**: Selecciona el intérprete correcto en VS Code.
-- **PyTorch CPU/GPU**: Instala `pytorch-cuda` si tienes GPU NVIDIA (`conda install pytorch-cuda=12.1 -c nvidia -c pytorch`).
-- **ModuleNotFoundError**: Ejecuta `pip install -r requirements.txt` dentro del entorno activado.
+| file                 | description                                          |
+|----------------------|------------------------------------------------------|
+| `roulette_env_sb3.py`| Gymnasium environment for European roulette          |
+| `train_sac.py`       | Trains SAC with $100 initial bankroll                |
+| `evaluate_policy.py` | Evaluates the model with large bankrolls and exports CSV |
+| `main.py`            | Pygame visual game (demo)                            |
+| `requirements.txt`   | Dependencies                                         |
 
 ---
 
-## ⚖️ Licencia
+## 🧰 Troubleshooting
 
-[MIT](LICENSE) — uso libre con atribución.
+- **Pylance "unresolved import"**: ensure the correct interpreter is selected in VS Code.
+- **PyTorch CPU/GPU**: install `pytorch-cuda` if you have an NVIDIA GPU (`conda install pytorch-cuda=12.1 -c nvidia -c pytorch`).
+- **ModuleNotFoundError**: run `pip install -r requirements.txt` inside the activated environment.
 
+---
+
+## ⚖️ License
+
+[MIT](LICENSE) — free use with attribution.
