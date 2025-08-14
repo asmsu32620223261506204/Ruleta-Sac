@@ -1,16 +1,22 @@
-# entornos/artefactos
-.venv/
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.pyc
-models/
-wandb/
-logs/
+*.py[cod]
+*$py.class
 
-# datos/resultados grandes
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Model weights and evaluation results
+models/*
+!models/.gitkeep
+result_examples/*
+!result_examples/.gitkeep
+
+# Generated data files
 *.csv
-*.parquet
-*.pt
-*.zip
-
-# imágenes y plots (si quieres mantener solo el final, comenta esta línea)
 *.png
+
+# Misc
+.DS_Store
